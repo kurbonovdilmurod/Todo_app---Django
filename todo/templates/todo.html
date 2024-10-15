@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <h1>{{ todo.title }}</h1>
+    </div>
+
+    <div>
+        <strong>Is done:</strong> {{ todo.is_done }}<br>
+        <strong>Description:</strong> {{ todo.description }}
+    </div>
+
+    {% if not todo.is_done %}
+        <div>
+            <a href="{% url 'todo' todo.id %}?change_status=done">Mark as done</a>
+        </div>
+    {% endif %}
+{% endblock content %}
