@@ -1,38 +1,72 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import TodoForm
 from .models import Todo
-
-def todos(request):
-    if request.method == 'POST':
-        form = TodoForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-
-            return redirect('todos')
-    else:
-        form = TodoForm()
-
-    todos = Todo.objects.filter(is_done=False)
-    context = {
-        'todos': todos,
-        'form': form
-    }
-
-    return render(request, 'todos.html', context)
+from django.contrib import messages
 
 
-def todo(request, pk):
+def view_todo(request, pk):
     todo = get_object_or_404(Todo, pk=pk)
-
-    change_status = request.GET.get('change_status', '')
-
-    if change_status:
-        todo.is_done = True
-        todo.save()
 
     context = {
         'todo': todo
     }
 
-    return render(request, 'todo.html', context)
+    return render(request, 'todo/view_todo.html', context)
+
+
+
+def add_todo(request):
+    if request.method == 'POST':
+        form = TodoForm(request.POST or None)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, ('Item Has Been Added To List!'))
+            return redirect('home')
+
+    else:
+        form = TodoForm()
+        context = {
+            'form': form,
+        }
+
+        return render(request, 'todo/add_todo.html', context)
+
+
+
+def edit_todo(request, pk):
+    if request.method == 'POST':
+        todo = Todo.objects.get(pk=pk)
+
+        form = TodoForm(request.POST or None, instance=todo)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, ('Item Has Been Edited!'))
+            return redirect('home')
+
+    else:
+        todo = Todo.objects.get(pk=pk)
+        return render(request, 'todo/edit_todo.html', {'todo':todo})
+
+
+
+
+def delete_todo(request, pk):
+    todo = Todo.objects.get(pk=pk)
+    todo.delete()
+    messages.warning(request, ('Item Has Been Deleted!'))
+    return redirect('home')
+
+
+def cross_off_todo(request, pk):
+    todo = Todo.objects.get(pk=pk)
+    todo.is_done = True
+    todo.save()
+    return redirect('home')
+
+def uncross_todo(request, pk):
+    todo = Todo.objects.get(pk=pk)
+    todo.is_done = False
+    todo.save()
+    return redirect('home')

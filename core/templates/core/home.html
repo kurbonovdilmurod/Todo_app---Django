@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'todo/css/todo_style.css' %}">
+{% endblock style %}
+
+
+
+{% block content %}
+<h1>My Todos</h1>
+<hr>
+<br>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<div>
+    <button><a href="{% url 'add_todo' %}">Add</a></button>
+</div>
+
+
+
+<div class="mt-5">
+    {% if all_todos %}
+        <table class="table table-bordered">
+            {% for todo in all_todos %}
+                {% if todo.is_done %}
+                    <tr class="table-secondary">
+                        <td class="striker">{{ todo.title }}</td>
+                        <td class="text-center"><a href="{% url 'uncross_todo' todo.id %}">Uncross</a></td>
+                        <td class="text-center">Not Edit</a></td>
+                        <td class="text-center"><a href="{% url 'view_todo' todo.id %}">View</a></td>
+                        <td class="text-center"><a href="{% url 'delete_todo' todo.id %}">Delete</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>{{ todo.title }}</td>
+                        <td class="text-center"><a href="{% url 'cross_off_todo' todo.id %}">Cross Off</a></td>
+                        <td class="text-center"><a href="{% url 'edit_todo' todo.id %}">Edit</a></td>
+                        <td class="text-center"><a href="{% url 'view_todo' todo.id %}">View</a></td>
+                        <td class="text-center"><a href="{% url 'delete_todo' todo.id %}">Delete</a></td>
+                    </tr>
+                {% endif %}
+            {% empty %}
+                <p>You don't have any todos yet...</p>
+            {% endfor %}
+        </table>
+    {% endif %}
+</div>
+
+{% endblock content %}
