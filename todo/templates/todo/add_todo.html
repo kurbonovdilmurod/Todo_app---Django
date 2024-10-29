@@ -6,7 +6,14 @@
 <br>
 <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <label  class="form-label fs-3 fw-bold">Title</label>
+    <input class="form-control mr-sm-2" type="search" placeholder="{{ todo.title }}"
+        value="{{ todo.title }}" aria-label="Search" name="title">
+    <label  class="form-label fs-3 fw-bold" >Description</label>
+    <textarea class="form-control mr-sm-2 mb-4" rows="10" type="text" placeholder="{{ todo.description }}"
+        value="{{ todo.description }}" aria-label="Search" name="description"></textarea>
+    <input type="hidden" value="{{ todo.is_done }}" name="completed">
 
     <button class="btn btn-primary">Submit</a></button>
 </form>
