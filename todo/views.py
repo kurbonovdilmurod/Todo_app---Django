@@ -23,6 +23,8 @@ def add_todo(request):
             form.save()
             messages.success(request, ('Item Has Been Added To List!'))
             return redirect('home')
+        else:
+            return redirect('add_todo')
 
     else:
         form = TodoForm()
@@ -54,9 +56,16 @@ def edit_todo(request, pk):
 
 def delete_todo(request, pk):
     todo = Todo.objects.get(pk=pk)
-    todo.delete()
-    messages.warning(request, ('Item Has Been Deleted!'))
-    return redirect('home')
+
+    if request.method == 'POST':
+        todo.delete()
+        messages.warning(request, ('Item Has Been Deleted!'))
+        return redirect('home')
+
+    context = {
+        'todo': todo,
+    }
+    return render(request, 'todo/delete_todo.html', context)
 
 
 def cross_off_todo(request, pk):
